@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { Container, Row, Col, Form, Button, Card } from "react-bootstrap";
+import { saveAs } from 'file-saver';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "prismjs/themes/prism.css";
 import SyntaxHighlighter, { Prism } from 'react-syntax-highlighter';
@@ -33,7 +34,6 @@ function App() {
             }
         }
     }
-
 
     async function fetchData(formData: FormData) {
         const response = await fetch("http://localhost:8000/process", {
@@ -68,6 +68,19 @@ function App() {
         }
     };
 
+    // @ts-ignore
+    function DownloadDocument({ result }) {
+        const handleDownload = () => {
+            const date = new Date();
+            const dateString = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}-${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`;
+            const blob = new Blob([result], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+            saveAs(blob, `document_${dateString}.docx`);
+        };
+
+        return (
+                <button onClick={handleDownload}>下载文档</button>
+        );
+    }
 
     return (
         <Container>
@@ -97,8 +110,9 @@ function App() {
                             </SyntaxHighlighter>
                         </Card.Body>
 
-
+                        <DownloadDocument result={result} />
                     </Card>
+
                 </Col>
             </Row>
         </Container>
